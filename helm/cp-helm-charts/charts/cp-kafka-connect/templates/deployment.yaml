@@ -35,7 +35,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
             - name: CONNECT_BOOTSTRAP_SERVERS
-              value: PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092
+              value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
             - name: CONNECT_GROUP_ID
               value: local-confluent-kafka
             - name: CONNECT_CONFIG_STORAGE_TOPIC

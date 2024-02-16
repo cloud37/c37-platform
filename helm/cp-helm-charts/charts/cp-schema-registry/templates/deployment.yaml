@@ -42,7 +42,7 @@ spec:
             - name: SCHEMA_REGISTRY_LISTENERS
               value: http://0.0.0.0:8081
             - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
-              value: PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092
+              value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
             - name: SCHEMA_REGISTRY_KAFKASTORE_GROUP_ID
               value: local-confluent-kafka
             - name: SCHEMA_REGISTRY_MASTER_ELIGIBILITY

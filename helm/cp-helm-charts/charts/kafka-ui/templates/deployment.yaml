@@ -25,7 +25,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
-              value: PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092
+              value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
             - name: KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME
               value: first
             - name: KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS

@@ -31,7 +31,7 @@ spec:
             {}
           env:
             - name: KSQL_BOOTSTRAP_SERVERS
-              value: PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092
+              value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
             - name: KSQL_KSQL_SERVICE_ID
               value: local-confluent-kafka
             - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
