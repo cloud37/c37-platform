@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: cp-zookeeper-server
-          image: "confluentinc/cp-zookeeper:6.1.0"
+          image: "confluentinc/cp-zookeeper:7.2.2"
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsUser: 0

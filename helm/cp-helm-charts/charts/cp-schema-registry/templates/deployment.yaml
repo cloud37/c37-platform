@@ -19,14 +19,9 @@ spec:
         app: cp-schema-registry
         release: local-confluent-kafka
     spec:
-      securityContext:
-        fsGroup: 10001
-        runAsGroup: 10001
-        runAsNonRoot: true
-        runAsUser: 10001
       containers:
         - name: cp-schema-registry-server
-          image: "confluentinc/cp-schema-registry:6.1.0"
+          image: "confluentinc/cp-schema-registry:7.2.2"
           imagePullPolicy: "IfNotPresent"
           ports:
             - name: schema-registry

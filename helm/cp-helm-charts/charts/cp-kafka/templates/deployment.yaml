@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: cp-kafka-broker
-          image: "confluentinc/cp-enterprise-kafka:6.1.0"
+          image: "confluentinc/cp-kafka:7.2.2"
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsUser: 0
