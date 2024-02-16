@@ -35,8 +35,6 @@ spec:
           resources:
             {}
           env:
-            - name : KAFKA_HEAP_OPTS
-              value: "-Xms512M -Xmx512M"
             - name : ZOOKEEPER_TICK_TIME
               value: "2000"
             - name : ZOOKEEPER_SYNC_LIMIT

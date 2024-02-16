@@ -42,5 +42,3 @@ spec:
               value: local-confluent-kafka
             - name: SCHEMA_REGISTRY_MASTER_ELIGIBILITY
               value: "true"
-            - name: SCHEMA_REGISTRY_HEAP_OPTS
-              value: "-Xms512M -Xmx512M"

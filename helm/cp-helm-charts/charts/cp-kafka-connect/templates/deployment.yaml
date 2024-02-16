@@ -44,29 +44,23 @@ spec:
               value: local-confluent-kafka-cp-kafka-connect-offset
             - name: CONNECT_STATUS_STORAGE_TOPIC
               value: local-confluent-kafka-cp-kafka-connect-status
+            - name: CONNECT_KEY_CONVERTER
+              value: io.confluent.connect.avro.AvroConverter
             - name: CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL
               value: http://local-confluent-kafka-cp-schema-registry:8081
+            - name: CONNECT_VALUE_CONVERTER
+              value: io.confluent.connect.avro.AvroConverter
             - name: CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
               value: http://local-confluent-kafka-cp-schema-registry:8081
-            - name: KAFKA_HEAP_OPTS
-              value: "-Xms512M -Xmx512M"
-            - name: "CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR"
+            - name: CONNECT_INTERNAL_KEY_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: CONNECT_INTERNAL_VALUE_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
               value: "1"
-            - name: "CONNECT_INTERNAL_KEY_CONVERTER"
-              value: "org.apache.kafka.connect.json.JsonConverter"
-            - name: "CONNECT_INTERNAL_VALUE_CONVERTER"
-              value: "org.apache.kafka.connect.json.JsonConverter"
-            - name: "CONNECT_KEY_CONVERTER"
-              value: "io.confluent.connect.avro.AvroConverter"
-            - name: "CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE"
-              value: "false"
-            - name: "CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR"
+            - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
               value: "1"
-            - name: "CONNECT_PLUGIN_PATH"
+            - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: CONNECT_PLUGIN_PATH
               value: "/usr/share/java,/usr/share/confluent-hub-components"
-            - name: "CONNECT_STATUS_STORAGE_REPLICATION_FACTOR"
-              value: "1"
-            - name: "CONNECT_VALUE_CONVERTER"
-              value: "io.confluent.connect.avro.AvroConverter"
-            - name: "CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE"
-              value: "false"

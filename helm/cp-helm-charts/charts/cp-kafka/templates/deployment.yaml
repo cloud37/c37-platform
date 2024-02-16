@@ -49,13 +49,19 @@ spec:
                   fieldPath: metadata.namespace
             - name: KAFKA_BROKER_ID
               value: "1"
-            - name: KAFKA_HEAP_OPTS
-              value: -Xms512M -Xmx512M
             - name: KAFKA_ZOOKEEPER_CONNECT
-              value: "local-confluent-kafka-cp-zookeeper:2181"
-            - name: "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP"
-              value: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
-            - name: "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR"
+              value: local-confluent-kafka-cp-zookeeper:2181
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+            - name: KAFKA_LOG_CLEANUP_POLICY
+              value: compact
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
               value: "1"
           command:
             - sh

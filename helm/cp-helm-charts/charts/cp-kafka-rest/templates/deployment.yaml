@@ -36,7 +36,11 @@ spec:
                   fieldPath: status.podIP
             - name: KAFKA_REST_BOOTSTRAP_SERVERS
               value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
+            - name: KAFKA_REST_ZOOKEEPER_CONNECT
+              value: local-confluent-kafka-cp-zookeeper:2181
             - name: KAFKA_REST_SCHEMA_REGISTRY_URL
               value: http://local-confluent-kafka-cp-schema-registry:8081
-            - name: KAFKAREST_HEAP_OPTS
-              value: "-Xms512M -Xmx512M"
+            - name: KAFKA_REST_LOG4J_ROOT_LOGLEVEL
+              value: "true"
+            - name: KAFKA_REST_LOG4J_LOGGERS
+              value: "true"
