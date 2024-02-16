@@ -30,14 +30,31 @@ spec:
           resources:
             {}
           env:
-            - name: KSQL_BOOTSTRAP_SERVERS
-              value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
             - name: KSQL_KSQL_SERVICE_ID
               value: local-confluent-kafka
-            - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
-              value: http://local-confluent-kafka-cp-schema-registry:8081
-            - name: KSQL_HEAP_OPTS
-              value: "-Xms512M -Xmx512M"
+            - name: KSQL_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://local-confluent-kafka-cp-kafka:9092
             - name: KSQL_LISTENERS
               value: http://0.0.0.0:8088
-
+            - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
+              value: http://local-confluent-kafka-cp-schema-registry:8081
+            - name: KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE
+              value: "true"
+            - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE
+              value: "true"
+            - name: KSQL_KSQL_SINK_REPLICAS
+              value: "1"
+            - name: KSQL_KSQL_INTERNAL_TOPIC_REPLICAS
+              value: "1"
+            - name: KSQL_KSQL_STREAMS_REPLICATION_FACTOR
+              value: "1"
+            - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KSQL_KSQL_HIDDEN_TOPICS
+              value: "^_.*"
+            - name: KSQL_CACHE_MAX_BYTES_BUFFERING
+              value: "0"
+            - name: KSQL_LOG4J_ROOT_LOGLEVEL
+              value: info
+            - name: KSQL_TOOLS_LOG4J_LOGLEVEL
+              value: info
