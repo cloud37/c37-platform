@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: local-confluent-kafka-cp-zookeeper-pdb
+  labels:
+    app: cp-zookeeper
+    chart: cp-zookeeper-0.1.0
+    release: local-confluent-kafka
+    heritage: Helm
+spec:
+  selector:
+    matchLabels:
+      app: cp-zookeeper
+      release: local-confluent-kafka
+  maxUnavailable: 1

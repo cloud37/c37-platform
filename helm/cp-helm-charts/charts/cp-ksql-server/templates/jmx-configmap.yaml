@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-confluent-kafka-cp-ksql-server-jmx-configmap
+  labels:
+    app: cp-ksql-server
+    chart: cp-ksql-server-0.1.0
+    release: local-confluent-kafka
+    heritage: Helm
+data:
+  jmx-ksql-server-prometheus.yml: |+
+    jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    ssl: false
+    whitelistObjectNames:
+      - io.confluent.ksql.metrics:type=ksql-engine-query-stats
+    rules:
+      - pattern : 'io.confluent.ksql.metrics<type=ksql-engine-query-stats>([^:]+):'
+        name: "cp_ksql_server_metrics_$1"

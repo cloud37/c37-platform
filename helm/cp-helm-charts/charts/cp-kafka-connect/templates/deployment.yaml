@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: local-confluent-kafka-cp-kafka-connect
+  labels:
+    app: cp-kafka-connect
+    chart: cp-kafka-connect-0.1.0
+    release: local-confluent-kafka
+    heritage: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cp-kafka-connect
+      release: local-confluent-kafka
+  template:
+    metadata:
+      labels:
+        app: cp-kafka-connect
+        release: local-confluent-kafka
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5556"
+    spec:
+      containers:
+        - name: prometheus-jmx-exporter
+          image: "solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143"
+          imagePullPolicy: "IfNotPresent"
+          command:
+            - java
+            - -XX:+UnlockExperimentalVMOptions
+            - -XX:+UseCGroupMemoryLimitForHeap
+            - -XX:MaxRAMFraction=1
+            - -XshowSettings:vm
+            - -jar
+            - jmx_prometheus_httpserver.jar
+            - "5556"
+            - /etc/jmx-kafka-connect/jmx-kafka-connect-prometheus.yml
+          ports:
+            - containerPort: 5556
+          resources:
+            {}
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /etc/jmx-kafka-connect
+        - name: cp-kafka-connect-server
+          image: "confluentinc/cp-kafka-connect:6.1.0"
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: kafka-connect
+              containerPort: 8083
+              protocol: TCP
+            - containerPort: 5555
+              name: jmx
+          resources:
+            {}
+          env:
+            - name: CONNECT_REST_ADVERTISED_HOST_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: CONNECT_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092
+            - name: CONNECT_GROUP_ID
+              value: local-confluent-kafka
+            - name: CONNECT_CONFIG_STORAGE_TOPIC
+              value: local-confluent-kafka-cp-kafka-connect-config
+            - name: CONNECT_OFFSET_STORAGE_TOPIC
+              value: local-confluent-kafka-cp-kafka-connect-offset
+            - name: CONNECT_STATUS_STORAGE_TOPIC
+              value: local-confluent-kafka-cp-kafka-connect-status
+            - name: CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL
+              value: http://local-confluent-kafka-cp-schema-registry:8081
+            - name: CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
+              value: http://local-confluent-kafka-cp-schema-registry:8081
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms512M -Xmx512M"
+            - name: "CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR"
+              value: "3"
+            - name: "CONNECT_INTERNAL_KEY_CONVERTER"
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: "CONNECT_INTERNAL_VALUE_CONVERTER"
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: "CONNECT_KEY_CONVERTER"
+              value: "io.confluent.connect.avro.AvroConverter"
+            - name: "CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE"
+              value: "false"
+            - name: "CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR"
+              value: "3"
+            - name: "CONNECT_PLUGIN_PATH"
+              value: "/usr/share/java,/usr/share/confluent-hub-components"
+            - name: "CONNECT_STATUS_STORAGE_REPLICATION_FACTOR"
+              value: "3"
+            - name: "CONNECT_VALUE_CONVERTER"
+              value: "io.confluent.connect.avro.AvroConverter"
+            - name: "CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE"
+              value: "false"
+            - name: KAFKA_JMX_PORT
+              value: "5555"
+      volumes:
+        - name: jmx-config
+          configMap:
+            name: local-confluent-kafka-cp-kafka-connect-jmx-configmap
