@@ -22,9 +22,6 @@ spec:
       labels:
         app: cp-zookeeper
         release: local-confluent-kafka
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "5556"
     spec:
       affinity:
         podAntiAffinity:
@@ -43,26 +40,6 @@ spec:
                         - local-confluent-kafka
                 topologyKey: "kubernetes.io/hostname"
       containers:
-        - name: prometheus-jmx-exporter
-          image: "solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143"
-          imagePullPolicy: "IfNotPresent"
-          command:
-            - java
-            - -XX:+UnlockExperimentalVMOptions
-            - -XX:+UseCGroupMemoryLimitForHeap
-            - -XX:MaxRAMFraction=1
-            - -XshowSettings:vm
-            - -jar
-            - jmx_prometheus_httpserver.jar
-            - "5556"
-            - /etc/jmx-zookeeper/jmx-zookeeper-prometheus.yml
-          ports:
-            - containerPort: 5556
-          resources:
-            {}
-          volumeMounts:
-            - name: jmx-config
-              mountPath: /etc/jmx-zookeeper
         - name: cp-zookeeper-server
           image: "confluentinc/cp-zookeeper:6.1.0"
           imagePullPolicy: "IfNotPresent"
@@ -75,15 +52,11 @@ spec:
               name: server
             - containerPort: 3888
               name: leader-election
-            - containerPort: 5555
-              name: jmx
           resources:
             {}
           env:
             - name : KAFKA_HEAP_OPTS
               value: "-Xms512M -Xmx512M"
-            - name : KAFKA_JMX_PORT
-              value: "5555"
             - name : ZOOKEEPER_TICK_TIME
               value: "2000"
             - name : ZOOKEEPER_SYNC_LIMIT
@@ -119,11 +92,6 @@ spec:
               mountPath: /var/lib/zookeeper/data
             - name: datalogdir
               mountPath: /var/lib/zookeeper/log
-      volumes:
-
-        - name: jmx-config
-          configMap:
-            name: local-confluent-kafka-cp-zookeeper-jmx-configmap
   volumeClaimTemplates:
     - metadata:
         name: datadir

@@ -22,9 +22,6 @@ spec:
       labels:
         app: cp-kafka
         release: local-confluent-kafka
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "5556"
     spec:
       affinity:
         podAntiAffinity:
@@ -43,26 +40,6 @@ spec:
                         - local-confluent-kafka
                 topologyKey: "kubernetes.io/hostname"
       containers:
-        - name: prometheus-jmx-exporter
-          image: "solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143"
-          imagePullPolicy: "IfNotPresent"
-          command:
-            - java
-            - -XX:+UnlockExperimentalVMOptions
-            - -XX:+UseCGroupMemoryLimitForHeap
-            - -XX:MaxRAMFraction=1
-            - -XshowSettings:vm
-            - -jar
-            - jmx_prometheus_httpserver.jar
-            - "5556"
-            - /etc/jmx-kafka/jmx-kafka-prometheus.yml
-          ports:
-            - containerPort: 5556
-          resources:
-            {}
-          volumeMounts:
-            - name: jmx-config
-              mountPath: /etc/jmx-kafka
         - name: cp-kafka-broker
           image: "confluentinc/cp-enterprise-kafka:6.1.0"
           imagePullPolicy: "IfNotPresent"
@@ -71,8 +48,6 @@ spec:
           ports:
             - containerPort: 9092
               name: kafka
-            - containerPort: 5555
-              name: jmx
           resources:
             {}
           env:
@@ -98,16 +73,12 @@ spec:
               value: "local-confluent-kafka-cp-zookeeper-headless:2181"
             - name: KAFKA_LOG_DIRS
               value: "/opt/kafka/data-0/logs"
-            - name: KAFKA_METRIC_REPORTERS
-              value: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
             - name: CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS
               value: "PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092"
             - name: "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP"
               value: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
             - name: "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR"
               value: "3"
-            - name: KAFKA_JMX_PORT
-              value: "5555"
           # This is required because the Downward API does not yet support identification of
           # pod numbering in statefulsets. Thus, we are required to specify a command which
           # allows us to extract the pod ID for usage as the Kafka Broker ID.
@@ -122,10 +93,6 @@ spec:
           volumeMounts:
             - name: datadir-0
               mountPath: /opt/kafka/data-0
-      volumes:
-        - name: jmx-config
-          configMap:
-            name: local-confluent-kafka-cp-kafka-jmx-configmap
   volumeClaimTemplates:
     - metadata:
         name: datadir-0

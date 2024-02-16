@@ -8,12 +8,9 @@ metadata:
     release: local-confluent-kafka
     heritage: Helm
 spec:
-  type:
   ports:
     - port: 2181
       name: client
-    - name: metrics
-      port: 5556
   selector:
     app: cp-zookeeper
     release: local-confluent-kafka

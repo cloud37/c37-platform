@@ -37,8 +37,6 @@ spec:
           env:
             - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
               value: PLAINTEXT://local-confluent-kafka-cp-kafka-headless:9092
-            - name: KAFKA_CLUSTERS_0_ZOOKEEPER
-              value:
             - name: KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME
               value: first
             - name: KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS
@@ -47,7 +45,6 @@ spec:
               value: http://local-confluent-kafka-cp-ksql-server:8088
             - name: KAFKA_CLUSTERS_0_SCHEMAREGISTRY
               value: http://local-confluent-kafka-cp-schema-registry:8081
-          envFrom:
           ports:
             - name: http
               containerPort: 8080

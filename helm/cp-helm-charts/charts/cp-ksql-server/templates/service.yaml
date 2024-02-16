@@ -11,8 +11,6 @@ spec:
   ports:
     - name: ksql-server
       port: 8088
-    - name: metrics
-      port: 5556
   selector:
     app: cp-ksql-server
     release: local-confluent-kafka

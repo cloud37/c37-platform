@@ -18,9 +18,6 @@ spec:
       labels:
         app: cp-schema-registry
         release: local-confluent-kafka
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "5556"
     spec:
       securityContext:
         fsGroup: 10001
@@ -28,26 +25,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 10001
       containers:
-        - name: prometheus-jmx-exporter
-          image: "solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143"
-          imagePullPolicy: "IfNotPresent"
-          command:
-            - java
-            - -XX:+UnlockExperimentalVMOptions
-            - -XX:+UseCGroupMemoryLimitForHeap
-            - -XX:MaxRAMFraction=1
-            - -XshowSettings:vm
-            - -jar
-            - jmx_prometheus_httpserver.jar
-            - "5556"
-            - /etc/jmx-schema-registry/jmx-schema-registry-prometheus.yml
-          ports:
-            - containerPort: 5556
-          resources:
-            {}
-          volumeMounts:
-            - name: jmx-config
-              mountPath: /etc/jmx-schema-registry
         - name: cp-schema-registry-server
           image: "confluentinc/cp-schema-registry:6.1.0"
           imagePullPolicy: "IfNotPresent"
@@ -55,8 +32,6 @@ spec:
             - name: schema-registry
               containerPort: 8081
               protocol: TCP
-            - containerPort: 5555
-              name: jmx
           resources:
             {}
           env:
@@ -74,10 +49,3 @@ spec:
               value: "true"
             - name: SCHEMA_REGISTRY_HEAP_OPTS
               value: "-Xms512M -Xmx512M"
-
-            - name: JMX_PORT
-              value: "5555"
-      volumes:
-        - name: jmx-config
-          configMap:
-            name: local-confluent-kafka-cp-schema-registry-jmx-configmap
