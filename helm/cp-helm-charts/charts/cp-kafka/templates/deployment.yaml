@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: local-confluent-kafka-cp-kafka
   labels:
@@ -12,33 +12,13 @@ spec:
     matchLabels:
       app: cp-kafka
       release: local-confluent-kafka
-  serviceName: local-confluent-kafka-cp-kafka-headless
-  podManagementPolicy: OrderedReady
-  replicas: 3
-  updateStrategy:
-    type: RollingUpdate
+  replicas: 1
   template:
     metadata:
       labels:
         app: cp-kafka
         release: local-confluent-kafka
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: "app"
-                      operator: In
-                      values:
-                        - cp-kafka
-                    - key: "release"
-                      operator: In
-                      values:
-                        - local-confluent-kafka
-                topologyKey: "kubernetes.io/hostname"
       containers:
         - name: cp-kafka-broker
           image: "confluentinc/cp-enterprise-kafka:6.1.0"
@@ -78,26 +58,11 @@ spec:
             - name: "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP"
               value: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
             - name: "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR"
-              value: "3"
-          # This is required because the Downward API does not yet support identification of
-          # pod numbering in statefulsets. Thus, we are required to specify a command which
-          # allows us to extract the pod ID for usage as the Kafka Broker ID.
-          # See: https://github.com/kubernetes/kubernetes/issues/31218
+              value: "1"
           command:
             - sh
             - -exc
             - |
-              export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
-              export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_NAME}.local-confluent-kafka-cp-kafka-headless.${POD_NAMESPACE}:9092,EXTERNAL://${HOST_IP}:$((31090 + ${KAFKA_BROKER_ID})) && \
+              export KAFKA_BROKER_ID=1 && \
+              export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://local-confluent-kafka-cp-kafka-headless.${POD_NAMESPACE}:9092,EXTERNAL://${HOST_IP}:$((31090 + ${KAFKA_BROKER_ID})) && \
               exec /etc/confluent/docker/run
-          volumeMounts:
-            - name: datadir-0
-              mountPath: /opt/kafka/data-0
-  volumeClaimTemplates:
-    - metadata:
-        name: datadir-0
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: "5Gi"
