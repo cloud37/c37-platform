@@ -1,0 +1,123 @@
+## ------------------------------------------------------
+## Kafka
+## ------------------------------------------------------
+confluent-local:
+  enabled: true
+  image: confluentinc/confluent-local
+  imageTag: 7.5.0
+
+## ------------------------------------------------------
+## Schema Registry
+## ------------------------------------------------------
+cp-schema-registry:
+  enabled: true
+  image: confluentinc/cp-schema-registry
+  imageTag: 7.5.0
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+  #  - name: "regcred"
+  heapOptions: "-Xms512M -Xmx512M"
+  resources: {}
+  ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
+  ## and remove the curly braces after 'resources:'
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  kafka:
+    bootstrapServers: "PLAINTEXT://cloud37-platform-confluent-local-0.cloud37-platform-confluent-local-headless:9092"
+
+## ------------------------------------------------------
+## REST Proxy
+## ------------------------------------------------------
+cp-kafka-rest:
+  enabled: true
+  image: confluentinc/cp-kafka-rest
+  imageTag: 7.5.0
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+  #  - name: "regcred"
+  heapOptions: "-Xms512M -Xmx512M"
+  resources: {}
+  ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
+  ## and remove the curly braces after 'resources:'
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  cp-kafka:
+    bootstrapServers: "PLAINTEXT://cloud37-platform-confluent-local-0.cloud37-platform-confluent-local-headless:9092"
+
+## ------------------------------------------------------
+## Kafka Connect
+## ------------------------------------------------------
+cp-kafka-connect:
+  enabled: true
+  image: confluentinc/cp-kafka-connect
+  imageTag: 7.5.0
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+  #  - name: "regcred"
+  heapOptions: "-Xms512M -Xmx512M"
+  resources: {}
+  ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
+  ## and remove the curly braces after 'resources:'
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  kafka:
+    bootstrapServers: "PLAINTEXT://cloud37-platform-confluent-local-0.cloud37-platform-confluent-local-headless:9092"
+
+## ------------------------------------------------------
+## KSQL Server
+## ------------------------------------------------------
+cp-ksql-server:
+  enabled: true
+  image: confluentinc/cp-ksqldb-server
+  imageTag: 7.5.0
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+  #  - name: "regcred"
+  heapOptions: "-Xms512M -Xmx512M"
+  ksql:
+    headless: false
+  kafka:
+    bootstrapServers: "PLAINTEXT://cloud37-platform-confluent-local-0.cloud37-platform-confluent-local-headless:9092"
+
+## ------------------------------------------------------
+## Kafka-UI
+## ------------------------------------------------------
+kafka-ui:
+  enabled: true
+  image:
+    repository: provectuslabs/kafka-ui
+    tag: v0.7.1
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+  #  - name: "regcred"
+  resources: {}
+  ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
+  ## and remove the curly braces after 'resources:'
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  service:
+    type: NodePort
+    nodePort: 30000
+  kafka:
+    bootstrapServers: "PLAINTEXT://cloud37-platform-confluent-local-0.cloud37-platform-confluent-local-headless:9092"

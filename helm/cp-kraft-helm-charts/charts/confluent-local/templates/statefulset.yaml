@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kafka.fullname" . }}
+  labels:
+    app: {{ include "kafka.name" . }}
+  {{- include "kafka.labels" . | nindent 4 }}
+spec:
+  podManagementPolicy: Parallel
+  replicas: {{ default 3 .Values.brokers }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: {{ include "kafka.name" . }}
+    {{- include "kafka.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "kafka.fullname" . }}-headless
+  template:
+    metadata:
+      labels:
+        app: {{ include "kafka.name" . }}
+      {{- include "kafka.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - command:
+        - sh
+        - -exc
+        - |
+          CLUSTER_DOMAIN=${APP_NAME}-headless.${POD_NAMESPACE}.${KUBERNETES_CLUSTER_DOMAIN}
+          CONTROLLER_DOMAIN=${CLUSTER_DOMAIN}:29093
+          export KAFKA_NODE_ID=${HOSTNAME##*-}
+          export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_NAME}.${CLUSTER_DOMAIN}:9092
+          export KAFKA_CONTROLLER_QUORUM_VOTERS="0@${APP_NAME}-0.${CONTROLLER_DOMAIN},1@${APP_NAME}-1.${CONTROLLER_DOMAIN},2@${APP_NAME}-2.${CONTROLLER_DOMAIN}"
+          exec /etc/confluent/docker/run
+        env:
+        - name: APP_NAME
+          value: {{ include "kafka.fullname" . }}
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        {{- range $key, $value := .Values.configurationOverrides }}
+        - name: {{ printf "KAFKA_%s" $key | replace "." "_" | upper | quote }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- range $key, $value := .Values.customEnv }}
+        - name: {{ $key | quote }}
+          value: {{ $value | quote }}
+        {{- end }}
+        image: {{ .Values.image }}:{{ .Values.imageTag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        name: kafka
+        ports:
+        - containerPort: 9092
+          name: tcp-kafka-int
+          protocol: TCP
+        - containerPort: 29093
+          name: tcp-kafka-ctrl
+          protocol: TCP
+        resources: {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.securityContext }}
+        securityContext: {{- toYaml .Values.securityContext | nindent 10 }}
+        {{- end }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/kafka
+          name: config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+      serviceAccountName: {{ include "kafka.fullname" . }}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: config
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
