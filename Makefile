@@ -42,16 +42,17 @@ HELM_CHART := helm/cp-kraft-helm-charts
 
 # Kubernetes
 KAFKA_UI_HTTP_PORT := 30000
+KAFKA_UI_HTTP_ADDR := http://localhost:$(KAFKA_UI_HTTP_PORT)
+
+KAFKA_PROXY_PORT := 32400
+KAFKA_PROXY_BROKER_ADDR := localhost:$(KAFKA_PROXY_PORT)
 
 POD_NAME := $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME))
 ENDPOINT := $(shell kubectl get endpoints | grep $(APP_NAME) | awk '{print $$1}')
 KAFKA_POD_FULLNAME := $(strip $(patsubst %, %.$(ENDPOINT).default.svc.cluster.local:9092, $(POD_NAME)))
+
 KAFKA_BROKERS := $(shell echo $(KAFKA_POD_FULLNAME) | sed 's/ /,/g')
-
 KAFKA_BROKERS_FIRST := $(firstword $(KAFKA_POD_FULLNAME))
-
-KAFKA_PROXY_PORT := 32400
-KAFKA_PROXY_BROKER_ADDR := localhost:$(KAFKA_PROXY_PORT)
 
 KAFKA_EXEC = kubectl exec -it $(firstword $(POD_NAME)) -- $(1)
 
@@ -80,66 +81,66 @@ start: up ## simply an alias for the target `up`
 restart: down up ## combines the `down` and `up` targets in sequence
 
 ##@ docker -> Kafka Commands
-kafka-cluster-cleanup: ## ...
+kafka-cluster-cleanup: ## cleans up the Kafka cluster
 	$(call KAFKA_TOOLS,true,)
 
 ##@ k8s -> Helm Commands
-helm-install: ## ...
+helm-install: ## installs the Helm chart
 	helm install $(APP_NAME) $(HELM_CHART) --set kafka-ui.service.nodePort=$(KAFKA_UI_HTTP_PORT) || true
 hi: helm-install
 
-helm-upgrade: ## ...
+helm-upgrade: ## upgrades the application via Helm
 	helm upgrade $(APP_NAME) $(HELM_CHART)
 
-helm-update: helm-install helm-upgrade ## ...
+helm-update: helm-install helm-upgrade ## updates the application using Helm
 hu: helm-update
 
-helm-uninstall: ## ...
+helm-uninstall: ## uninstalls the Helm chart
 	helm uninstall $(APP_NAME)
 hd: helm-uninstall
 
-helm-show: ## ...
+helm-show: ## shows details of the Helm installation
 	helm get all $(APP_NAME)
 
-helm-deps-add: ## ...
+helm-deps-add: ## adds Helm chart repositories
 	@helm repo add ricardo https://ricardo-ch.github.io/helm-charts/
 
-helm-deps-install: ## ...
+helm-deps-install: ## adds Helm chart repositories
 	helm install kafka-proxy ricardo/kafka-proxy --set 'config.kafkaClient.brokers={$(KAFKA_BROKERS_FIRST)}' --set config.proxyClientTlsEnabled=false || true
 
-helm-deps-uninstall: ## ...
+helm-deps-uninstall: ## uninstalls Helm chart dependencies
 	helm uninstall kafka-proxy || true
 
 ##@ k8s -> Kafka
-kafka-bash: ## ...
+kafka-bash: ## opens a Bash shell in a Kafka pod
 	$(call KAFKA_EXEC,bash)
 
-kafka-topic/%: ## ...
+kafka-topic/%: ## creates a Kafka topic e.g. kafka-topic/test
 	$(call KAFKA_EXEC,kafka-topics --create --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)) --partitions 3 --replication-factor 3)
 
-kafka-producer/%: ## ...
+kafka-producer/%: ## starts a Kafka producer for a topic e.g. kafka-producer/test
 	$(call KAFKA_EXEC,kafka-console-producer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)))
 
-kafka-consumer/%: ## ...
+kafka-consumer/%: ## starts a Kafka consumer for a topic e.g. kafka-consumer/test
 	$(call KAFKA_EXEC,kafka-console-consumer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)))
 
 ##@ k8s -> kcat (kafkacat)
-kcat-meta: ## ...
+kcat-meta: ## displays Kafka cluster metadata with kcat
 	kcat -L -b $(KAFKA_PROXY_BROKER_ADDR) -J | jq
 
-kcat-topic-all: ## ...
+kcat-topic-all: ## lists all Kafka topics with kcat
 	kcat -L -b $(KAFKA_PROXY_BROKER_ADDR) -J | jq '.topics[].topic'
 
-kcat-consumer/%: ## ...
+kcat-consumer/%: ## consumes messages from a topic with kcat e.g. kcat-consumer/test
 	kcat -b $(KAFKA_PROXY_BROKER_ADDR) -t $(notdir $@) -C
 
-kcat-producer/%: ## ...
+kcat-producer/%: ## produces a message to a topic with kcat e.g. kcat-producer/test/abc
 	echo "echo '$(notdir $@)' | kcat -b $(KAFKA_PROXY_BROKER_ADDR) -t $(notdir $(patsubst %/,%,$(dir $@))) -P"
 
 ##@ k8s -> Kafka Proxy
-kill-proxy-port: ## ...
+kill-proxy-port: ## frees up the Kafka proxy port by killing the process
 	kill -9 $(shell sudo lsof -i :$(KAFKA_PROXY_PORT) | awk '{print $$2}' | tail -1)
 
 ##@ k8s -> Kafka UI
-open: ## ...
-	open http://localhost:30000
+ui-open: ##  opens the Kafka UI in a web browser
+	open $(KAFKA_PROXY_BROKER_ADDR)
