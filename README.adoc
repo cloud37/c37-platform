@@ -1,0 +1,55 @@
+= Project Documentation
+
+== Overview
+
+This project is designed to deploy and manage a Kafka-based streaming platform on Kubernetes using Helm charts. It is inspired by and builds upon the foundations provided by the following projects:
+
+* link:https://github.com/confluentinc/cp-helm-charts[Confluent Inc's cp-helm-charts] - Helm charts for deploying Confluent Platform components.
+* link:https://github.com/rafaelmnatali/kafka-k8s[Rafael Natali's kafka-k8s] - A project demonstrating Kafka deployment on Kubernetes.
+
+The project encompasses components such as Kafka, Kafka Connect, Kafka REST proxy, KSQL server, Schema Registry, Zookeeper, and a Kafka UI for monitoring and management.
+
+== Project Structure
+
+The project is organized into several key directories and files:
+
+* *Makefile* - Contains directives for the `make` command to automate the building and deployment process.
+* *README.md* - Provides an overview of the project, setup instructions, and usage guidelines.
+* *helm/* - Contains Helm charts for deploying the project components on Kubernetes.
+
+=== Helm Charts
+
+Within the *helm/* directory, there are two main subdirectories:
+
+* *cp-helm-charts/*: Contains Helm charts for Confluent Platform components.
+** *Chart.yaml*: Specifies the chart's metadata.
+** *charts/*: Includes sub-charts for each component.
+** *requirements.yaml*: Lists chart dependencies.
+
+* *cp-kraft-helm-charts/*: A Helm chart for deploying a Kafka cluster in Kraft mode.
+** *Chart.yaml*: Defines the chart's metadata.
+** *values.yaml*: Provides default configuration values.
+** *templates/*: Contains templates for Kubernetes resources.
+
+== Key Components
+
+The project includes several components critical for a Kafka-based streaming platform:
+
+* *Kafka*: Distributed streaming platform for publishing and subscribing to streams of records.
+* *Kafka Connect*: Tool for streaming data between Apache Kafka and other systems.
+* *Kafka REST Proxy*: Provides a RESTful interface to Kafka clusters.
+* *KSQL Server*: Enables real-time data processing against Kafka.
+* *Schema Registry*: Manages Avro schemas for Kafka topics.
+* *Zookeeper*: Centralized service for maintaining configuration information.
+* *Kafka UI*: Web-based UI for managing Kafka clusters.
+
+== Usage
+
+=== Makefile Commands
+
+The Makefile simplifies project management with commands such as:
+
+* `make build`: Builds Docker images for the stack.
+* `make up`: Starts the entire stack.
+* `make down`: Tears down the stack.
+* `make kafka
