@@ -1,10 +1,40 @@
 ## ------------------------------------------------------
-## Kafka
+## Kafka (confluent-local)
 ## ------------------------------------------------------
 confluent-local:
-  enabled: true
+  enabled: false
   image: confluentinc/confluent-local
   imageTag: 7.5.0
+
+## ------------------------------------------------------
+## Kafka
+## ------------------------------------------------------
+cp-kafka:
+  enabled: true
+  brokers: 3
+  image: confluentinc/cp-kafka
+  imageTag: 7.5.0
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+  #  - name: "regcred"
+  heapOptions: "-Xms512M -Xmx512M"
+  persistence:
+    enabled: true
+    # storageClass: ""
+    size: 5Gi
+    disksPerBroker: 1
+  resources: {}
+  ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
+  ## and remove the curly braces after 'resources:'
+  #  limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #  requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  #securityContext:
+  #  runAsUser: 0
 
 ## ------------------------------------------------------
 ## Schema Registry
@@ -28,7 +58,7 @@ cp-schema-registry:
   #   cpu: 100m
   #   memory: 128Mi
   kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-confluent-local-0.c37-platform-confluent-local-headless:9092"
+    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## REST Proxy
@@ -52,7 +82,7 @@ cp-kafka-rest:
   #   cpu: 100m
   #   memory: 128Mi
   cp-kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-confluent-local-0.c37-platform-confluent-local-headless:9092"
+    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## Kafka Connect
@@ -76,7 +106,7 @@ cp-kafka-connect:
   #   cpu: 100m
   #   memory: 128Mi
   kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-confluent-local-0.c37-platform-confluent-local-headless:9092"
+    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## KSQL Server
@@ -93,7 +123,7 @@ cp-ksql-server:
   ksql:
     headless: false
   kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-confluent-local-0.c37-platform-confluent-local-headless:9092"
+    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## Kafka-UI
@@ -120,4 +150,4 @@ kafka-ui:
     type: NodePort
     nodePort: 30000
   kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-confluent-local-0.c37-platform-confluent-local-headless:9092"
+    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"

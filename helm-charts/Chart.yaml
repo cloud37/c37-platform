@@ -22,3 +22,33 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
+
+dependencies:
+  - name: confluent-local
+    version: 0.1.0
+    repository: file://./charts/confluent-local
+    condition: confluent-local.enabled
+  - name: cp-kafka
+    version: 0.1.0
+    repository: file://./charts/cp-kafka
+    condition: cp-kafka.enabled
+  - name: cp-schema-registry
+    version: 0.1.0
+    repository: file://./charts/cp-schema-registry
+    condition: cp-schema-registry.enabled
+  - name: cp-kafka-rest
+    version: 0.1.0
+    repository: file://./charts/cp-kafka-rest
+    condition: cp-kafka-rest.enabled
+  - name: cp-kafka-connect
+    version: 0.1.0
+    repository: file://./charts/cp-kafka-connect
+    condition: cp-kafka-connect.enabled
+  - name: cp-ksql-server
+    version: 0.1.0
+    repository: file://./charts/cp-ksql-server
+    condition: cp-ksql-server.enabled
+  - name: kafka-ui
+    version: 0.1.0
+    repository: file://./charts/kafka-ui
+    condition: kafka-ui.enabled
