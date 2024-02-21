@@ -7,17 +7,20 @@ The C37 platform automates the deployment and management of a robust Kafka-based
 _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-helm-charts[cp-helm-charts by Confluent Inc.] and https://github.com/rafaelmnatali/kafka-k8s[kafka-k8s by Rafael Natali]. Its aim is to utilize components of the Confluent Platform and to demonstrate and test the deployment of Kafka on Kubernetes._
 
 == System Prerequisites
+_This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB of RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
+
 To successfully utilize the C37-Platform, you will need:
 
-* *make*: For executing instructions in the Makefile.
-* *docker* and *docker-compose*: For running services in containers.
-* *helm*: For deploying on Kubernetes.
-* *kcat* (formerly known as kafkacat): Essential for local Kafka testing, providing a command-line interface to produce and consume messages from Kafka topics.
+=== Mandatory
+- *make*: For executing instructions in the Makefile. Ensure compatibility with your project by using version X.X or newer.
+- *docker* and *docker-compose*: For running services in containers. Docker Desktop version 4.27.2 or newer is recommended. Note that Docker Desktop integrates `docker-compose`.
+- *helm*: For deploying on Kubernetes. Version X.X or newer is recommended.
 
-_This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
+=== Recommendation
+- *kcat* (formerly known as kafkacat): Essential for local Kafka testing. It provides a command-line interface to produce and consume messages from Kafka topics.
+- *k9s**: For efficient management of Kubernetes clusters. It offers a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
 
-== Additional Tools Recommendation
-For efficient management of Kubernetes clusters, we highly recommend using https://k9scli.io/[k9s]. It provides a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
+NOTE: While this setup is tested on macOS with specific hardware, efforts have been made to ensure compatibility across various platforms. For users on Windows or Linux, please refer to the respective installation guides for each tool, adjusting commands and setups as necessary.
 
 == Project Structure
 The project structure is designed for ease of use and scalability, including the following main components and directories:
