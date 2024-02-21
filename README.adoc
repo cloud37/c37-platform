@@ -3,7 +3,7 @@
 == Overview
 The C37 platform automates the deployment and management of a robust Kafka-based streaming ecosystem on Kubernetes and Docker environments. By leveraging Helm Charts and Docker Compose, it simplifies the setup and scalability of the Confluent Kafka ecosystem and is suitable for development, testing, and production environments. This platform integrates essential components such as Kafka, Kafka Connect, Schema Registry, REST Proxy, and a Kafka UI, offering comprehensive monitoring and management capabilities.
 
-IMPORTANT: In this project, Zookeeper was not used as Kafka > 3.2 supports internal clustering with KRaft for production environments.
+*In this project, Zookeeper was not used as Kafka > 3.2 supports internal clustering with KRaft for production environments.*
 
 _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-helm-charts[cp-helm-charts by Confluent Inc.] and https://github.com/rafaelmnatali/kafka-k8s[kafka-k8s by Rafael Natali]. Its aim is to utilize components of the Confluent Platform and to demonstrate and test the deployment of Kafka on Kubernetes._
 
@@ -15,11 +15,10 @@ To successfully utilize the C37-Platform, you will need:
 * Helm: For deploying on Kubernetes.
 * kcat (formerly known as kafkacat): Essential for local Kafka testing, providing a command-line interface to produce and consume messages from Kafka topics.
 
+_This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
+
 == Additional Tools Recommendation
 For efficient management of Kubernetes clusters, we highly recommend using k9s. It provides a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
-
-== Test Environment
-This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1.
 
 == Project Structure
 The project structure is designed for ease of use and scalability, including the following main components and directories:
