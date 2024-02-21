@@ -146,4 +146,4 @@ kill-proxy-port: ## frees up the Kafka proxy port by killing the process
 
 ##@ k8s -> Kafka UI
 ui-open: ##  opens the Kafka UI in a web browser
-	open $(KAFKA_PROXY_BROKER_ADDR)
+	open $(KAFKA_UI_HTTP_ADDR)
