@@ -16,7 +16,7 @@ _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 
 
 === Recommendation
 - *kcat* (formerly known as kafkacat): Essential for local Kafka testing. It provides a command-line interface to produce and consume messages from Kafka topics.
-- *k9s**: For efficient management of Kubernetes clusters. It offers a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
+- *k9s*: For efficient management of Kubernetes clusters. It offers a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
 
 NOTE: While this setup is tested on macOS with specific hardware, efforts have been made to ensure compatibility across various platforms. For users on Windows or Linux, please refer to the respective installation guides for each tool, adjusting commands and setups as necessary.
 
