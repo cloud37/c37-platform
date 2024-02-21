@@ -138,10 +138,10 @@ kcat-consumer/%: ## Consume messages from a topic using kcat, e.g., `make kcat-c
 kcat-producer/%: ## Produce a message to a topic using kcat, e.g., `make kcat-producer/test/abc` to send "abc" to topic "test"
 	echo "echo '$(notdir $@)' | kcat -b $(KAFKA_PROXY_BROKER_ADDR) -t $(notdir $(patsubst %/,%,$(dir $@))) -P"
 
-##@ k8s -> Kafka Proxy
+##@ Kafka Proxy Operations
 kill-proxy-port: ## Free up the Kafka proxy port by killing the process occupying it
 	kill -9 $(shell sudo lsof -i :$(KAFKA_PROXY_PORT) | awk '{print $$2}' | tail -1)
 
-##@ k8s -> Kafka UI
+##@ Kafka UI Operations
 ui-open: ## Open the Kafka UI in a web browser
 	open $(KAFKA_UI_HTTP_ADDR)
