@@ -50,7 +50,7 @@ Docker and Docker-Compose provide a flexible alternative for environments better
 * *Kafka*: A distributed streaming platform that forms the backbone of our ecosystem.
 * *Kafka Connect*: Facilitates the streaming of data between Kafka and other systems.
 * *Kafka REST Proxy*: Provides RESTful access to Kafka clusters, enabling easy integration with other applications.
-* *KSQL Server*: Enables real-time data processing, allowing for complex queries and data transformation.
+* *ksqlDB*: Enables real-time data processing, allowing for complex queries and data transformation.
 * *Schema Registry*: Manages Avro schemas for Kafka topics, ensuring data consistency.
 * *Kafka UI*: A web interface for cluster management, offering a visual overview of your Kafka environment.
 
