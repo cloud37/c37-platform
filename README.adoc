@@ -6,6 +6,15 @@ The C37 platform automates the deployment and management of a robust Kafka-based
 
 _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-helm-charts[cp-helm-charts by Confluent Inc.] and https://github.com/rafaelmnatali/kafka-k8s[kafka-k8s by Rafael Natali]. Its aim is to utilize components of the Confluent Platform and to demonstrate and test the deployment of Kafka on Kubernetes._
 
+== Key Components
+
+* *Kafka*: A distributed streaming platform that forms the backbone of our ecosystem.
+* *Kafka Connect*: Facilitates the streaming of data between Kafka and other systems.
+* *Kafka REST Proxy*: Provides RESTful access to Kafka clusters, enabling easy integration with other applications.
+* *ksqlDB*: Enables real-time data processing, allowing for complex queries and data transformation.
+* *Schema Registry*: Manages Avro schemas for Kafka topics, ensuring data consistency.
+* *Kafka UI*: A web interface for cluster management, offering a visual overview of your Kafka environment.
+
 == System Prerequisites
 _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB of RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
 
@@ -27,15 +36,6 @@ The project structure is designed for ease of use and scalability, including the
 * `helm-charts/`: Helm charts for deploying services on Kubernetes.
 * `kafka-connect/`: Plugins for Kafka Connect, facilitating seamless data integration.
 * `kafka-utility/`: Utilities for Kafka management tasks, enhancing operational efficiency.
-
-== Key Components
-
-* *Kafka*: A distributed streaming platform that forms the backbone of our ecosystem.
-* *Kafka Connect*: Facilitates the streaming of data between Kafka and other systems.
-* *Kafka REST Proxy*: Provides RESTful access to Kafka clusters, enabling easy integration with other applications.
-* *ksqlDB*: Enables real-time data processing, allowing for complex queries and data transformation.
-* *Schema Registry*: Manages Avro schemas for Kafka topics, ensuring data consistency.
-* *Kafka UI*: A web interface for cluster management, offering a visual overview of your Kafka environment.
 
 == Deployment
 
