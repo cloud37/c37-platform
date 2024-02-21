@@ -65,7 +65,6 @@ docker-login: DOCKER_LOGIN_CREDENTIALS?=
 docker-login: ## Auto login to the Docker repository
 	docker login $(DOCKER_LOGIN_CREDENTIALS) $(DOCKER_REPOSITORY)
 
-##@ docker -> Containerizing
 docker-build: ## Build stack images with no cache
 	$(DOCKER_COMPOSE) build --no-cache
 db: docker-build
@@ -81,7 +80,6 @@ dd: docker-down
 docker-restart: docker-down docker-up ## Restart the stack by tearing it down and then starting it up again
 dr: docker-restart
 
-##@ Kafka Operations within Docker
 docker-cleanup: ## Cleans up the Kafka cluster by removing all data
 	$(call KAFKA_TOOLS,true,)
 
