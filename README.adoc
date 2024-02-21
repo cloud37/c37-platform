@@ -6,7 +6,7 @@ The C37 platform automates the deployment and management of a robust Kafka-based
 
 _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-helm-charts[cp-helm-charts by Confluent Inc.] and https://github.com/rafaelmnatali/kafka-k8s[kafka-k8s by Rafael Natali]. Its aim is to utilize components of the Confluent Platform and to demonstrate and test the deployment of Kafka on Kubernetes._
 
-image::docs/tutorial.gif[]
+image::docs/c37-platform-k8s.gif[]
 //video::9pFq2i4ZaHA[youtube]
 
 == Key Components
