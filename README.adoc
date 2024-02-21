@@ -9,8 +9,6 @@ _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-
 == System Prerequisites
 _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB of RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
 
-To successfully utilize the C37-Platform, you will need:
-
 === Mandatory
 - *make*: For executing instructions in the Makefile. Ensure compatibility with your project by using version X.X or newer.
 - *docker* and *docker-compose*: For running services in containers. Docker Desktop version 4.27.2 or newer is recommended. Note that Docker Desktop integrates `docker-compose`.
