@@ -28,6 +28,15 @@ The project structure is designed for ease of use and scalability, including the
 * `kafka-connect/`: Plugins for Kafka Connect, facilitating seamless data integration.
 * `kafka-utility/`: Utilities for Kafka management tasks, enhancing operational efficiency.
 
+== Key Components
+
+* *Kafka*: A distributed streaming platform that forms the backbone of our ecosystem.
+* *Kafka Connect*: Facilitates the streaming of data between Kafka and other systems.
+* *Kafka REST Proxy*: Provides RESTful access to Kafka clusters, enabling easy integration with other applications.
+* *ksqlDB*: Enables real-time data processing, allowing for complex queries and data transformation.
+* *Schema Registry*: Manages Avro schemas for Kafka topics, ensuring data consistency.
+* *Kafka UI*: A web interface for cluster management, offering a visual overview of your Kafka environment.
+
 == Deployment
 
 === Helm
@@ -44,15 +53,6 @@ Docker and Docker-Compose provide a flexible alternative for environments better
 * `make docker-up` or `make du`: Start the entire stack using Docker-Compose.
 * `make docker-down` or `make dd`: Tear down the stack, removing containers and networks.
 * `make docker-restart` or `make dr`: Swiftly restart the environment by combining `docker-down` and `docker-up`.
-
-== Key Components
-
-* *Kafka*: A distributed streaming platform that forms the backbone of our ecosystem.
-* *Kafka Connect*: Facilitates the streaming of data between Kafka and other systems.
-* *Kafka REST Proxy*: Provides RESTful access to Kafka clusters, enabling easy integration with other applications.
-* *ksqlDB*: Enables real-time data processing, allowing for complex queries and data transformation.
-* *Schema Registry*: Manages Avro schemas for Kafka topics, ensuring data consistency.
-* *Kafka UI*: A web interface for cluster management, offering a visual overview of your Kafka environment.
 
 == Community and Contributions
 
