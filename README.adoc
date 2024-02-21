@@ -18,8 +18,8 @@ Inspired By::
 
 === Helm Charts
 
-* *cp-helm-charts/*: Includes Helm charts for Confluent Platform components with `Chart.yaml`, `charts/`, and `requirements.yaml`.
-* *cp-kraft-helm-charts/*: Deploys Kafka in Kraft mode, featuring `Chart.yaml`, `values.yaml`, and Kubernetes resource templates.
+* *cp-helm-charts*: Includes Helm charts for Confluent Platform components with Zookeeper.
+* *cp-kraft-helm-charts*:  Includes Helm charts for Confluent Platform components with Kafka in KRaft mode.
 
 === Docker Deployment
 
@@ -51,7 +51,7 @@ The platform also supports deployment using Docker and Docker-Compose, providing
 * *Restart*: `make docker-restart` or `make dr` combines the `docker-down` and `docker-up` targets in sequence, facilitating a swift restart of the environment.
 
 
-=== Testing the Ecosystem (Kubernetes/Helm)
+=== Testing the Ecosystem (Helm/Kubernetes)
 
 The following testing procedures are specifically designed for the Kubernetes/Helm deployment:
 
