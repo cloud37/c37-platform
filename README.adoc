@@ -9,7 +9,7 @@ _Inspired by_ the Helm charts https://github.com/confluentinc/cp-helm-charts[Con
 == Project Structure
 
 * *Makefile*: Facilitates building and deployment processes with make commands.
-* *README.md*: Offers project insights, setup instructions, and usage guidelines.
+* *README.adoc*: Offers project insights, setup instructions, and usage guidelines.
 * *helm/*: Hosts Helm charts for Kubernetes deployment.
 * *docker-compose.yml*: Defines the Docker setup for deploying the Kafka ecosystem.
 
