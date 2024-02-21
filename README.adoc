@@ -18,7 +18,7 @@ To successfully utilize the C37-Platform, you will need:
 _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
 
 == Additional Tools Recommendation
-For efficient management of Kubernetes clusters, we highly recommend using k9s. It provides a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
+For efficient management of Kubernetes clusters, we highly recommend using https://k9scli.io/[k9s]. It provides a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
 
 == Project Structure
 The project structure is designed for ease of use and scalability, including the following main components and directories:
