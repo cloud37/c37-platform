@@ -4,7 +4,7 @@
 
 The C37-Platform automates the deployment and management of a robust Kafka-based streaming ecosystem on Kubernetes and Docker environments. By leveraging Helm charts and Docker Compose, it simplifies the setup and scalability of the Confluent Kafka ecosystem, catering to development, testing, and production environments. This platform integrates essential components like Kafka brokers, Zookeeper, Kafka Connect, Schema Registry, REST Proxy, and a Kafka UI, enhancing monitoring and management capabilities.
 
-_Inspired by_ the Helm charts https://github.com/confluentinc/cp-helm-charts[Confluent Inc.'s cp-helm-charts] and https://github.com/rafaelmnatali/kafka-k8s[Rafael Natali's kafka-k8s] for deploying Confluent platform components and demonstrating Kafka deployment on Kubernetes in Zookeeper and KRaft modes.
+_Inspired by the Helm charts https://github.com/confluentinc/cp-helm-charts[Confluent Inc.'s cp-helm-charts] and https://github.com/rafaelmnatali/kafka-k8s[Rafael Natali's kafka-k8s] for deploying Confluent platform components and demonstrating Kafka deployment on Kubernetes in Zookeeper and KRaft modes._
 
 == Project Structure
 
