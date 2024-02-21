@@ -8,12 +8,10 @@ The C37 platform automates the deployment and management of a robust Kafka-based
 _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-helm-charts[cp-helm-charts by Confluent Inc.] and https://github.com/rafaelmnatali/kafka-k8s[kafka-k8s by Rafael Natali]. Its aim is to utilize components of the Confluent Platform and to demonstrate and test the deployment of Kafka on Kubernetes._
 
 == System Prerequisites
-To successfully utilize the C37-Platform, you will need:
-
-* Make: For executing instructions in the Makefile.
-* Docker and Docker-Compose: For running services in containers.
-* Helm: For deploying on Kubernetes.
-* kcat (formerly known as kafkacat): Essential for local Kafka testing, providing a command-line interface to produce and consume messages from Kafka topics.
+* *make*: For executing instructions in the Makefile.
+* *docker* and *docker-compose*: For running services in containers.
+* *helm*: For deploying on Kubernetes.
+* *kcat* (formerly known as kafkacat): Essential for local Kafka testing, providing a command-line interface to produce and consume messages from Kafka topics.
 
 _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
 
