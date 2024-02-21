@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# This script is inspired by https://rmoff.net/2019/06/06/automatically-restarting-failed-kafka-connect-tasks
+
+# Constants
+DEFAULT_INTERVAL_SECONDS=120
+
+# Waits for Kafka Connect to be available
+connect_waiter() {
+  local kafka_connect_url="$1"
+  until [[ "$(curl -s -o /dev/null -w '%{http_code}' "${kafka_connect_url}")" == "200" ]]; do
+    echo "Waiting for kafka-connect (${kafka_connect_url}) ..."
+    sleep 5
+  done
+}
+
+# Restarts the failed tasks in Kafka Connect
+restart_failed_tasks () {
+  local kafka_connect_url="$1"
+  echo '----'
+
+  # What time is it?
+  date
+
+  # List current connectors and their status
+  curl -s "$kafka_connect_url/connectors?expand=info&expand=status" | \
+    jq '. | to_entries[] | [ .value.info.type, .key, .value.status.connector.state,.value.status.tasks[].state,.value.info.config."connector.class"]|join(":|:")' | \
+    column -s : -t| sed 's/\"//g'| sort
+
+  # Restart any connector tasks that are FAILED
+  curl -s "$kafka_connect_url/connectors?expand=status" | \
+    jq -c -M 'map({name: .status.name } +  {tasks: .status.tasks}) | .[] | {task: ((.tasks[]) + {name: .name})}  | select(.task.state=="FAILED") | {name: .task.name, task_id: .task.id|tostring} | ("/connectors/"+ .name + "/tasks/" + .task_id + "/restart")' | \
+    sed 's/\"//g' | \
+    xargs -I{connector_and_task} curl -v -X POST "$kafka_connect_url"\{connector_and_task\}
+}
+
+# Main
+if [[ -z ${KAFKA_CONNECT_URL} ]]; then
+  printf '%s\n' "KAFKA_CONNECT_URL is not been set." >&2
+  exit 1
+fi
+
+connect_waiter "${KAFKA_CONNECT_URL}"
+
+while true
+do
+  restart_failed_tasks "${KAFKA_CONNECT_URL}"
+  sleep "${RESTARTER_INTERVAL_SECONDS:-$DEFAULT_INTERVAL_SECONDS}"
+done

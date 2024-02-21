@@ -3,14 +3,14 @@
 MAKEFLAGS += --warn-undefined-variables --no-print-directory
 .SHELLFLAGS := -eu -o pipefail -c
 
-# Use bash for inline if-statements
-SHELL:=bash
-
 all: help
 .PHONY: all
 
+# Use bash for inline if-statements
+SHELL:=bash
+
 # Artifact settings
-export APP_NAME?=cloud37-platform
+export APP_NAME?=c37-platform
 export DOCKER_LOCATION?=docker.cloud37.io
 export DOCKER_OWNER?=cloud37
 export DOCKER_REPOSITORY_ROOT:=$(DOCKER_LOCATION)/$(DOCKER_OWNER)
@@ -68,17 +68,20 @@ docker-login: ## auto login to docker repository
 	docker login $(DOCKER_LOGIN_CREDENTIALS) $(DOCKER_REPOSITORY)
 
 ##@ docker -> Containerizing
-build: ## build stack images
+docker-build: ## build stack images
 	$(DOCKER_COMPOSE) build --no-cache
+db: docker-build
 
-up: ## create and start the entire stack
+docker-up: ## create and start the entire stack
 	$(DOCKER_COMPOSE) up
+du: docker-up
 
-down: ## tear down entire stack
+docker-down: ## tear down entire stack
 	$(DOCKER_COMPOSE) down
+dd: docker-down
 
-start: up ## simply an alias for the target `up`
-restart: down up ## combines the `down` and `up` targets in sequence
+docker-restart: docker-down docker-up ## combines the `down` and `up` targets in sequence
+dr: docker-restart
 
 ##@ docker -> Kafka Commands
 kafka-cluster-cleanup: ## cleans up the Kafka cluster

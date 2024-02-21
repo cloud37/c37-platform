@@ -1,55 +1,63 @@
-= Project Documentation
+= C37-Platform
 
 == Overview
 
-This project is designed to deploy and manage a Kafka-based streaming platform on Kubernetes using Helm charts. It is inspired by and builds upon the foundations provided by the following projects:
+The C37-Platform automates the deployment and management of a robust Kafka-based streaming ecosystem on Kubernetes and Docker environments. By leveraging Helm charts and Docker Compose, it simplifies the setup and scalability of the Confluent Kafka ecosystem, catering to development, testing, and production environments. This platform integrates essential components like Kafka brokers, Zookeeper, Kafka Connect, Schema Registry, REST Proxy, and a Kafka UI, enhancing monitoring and management capabilities.
 
-* link:https://github.com/confluentinc/cp-helm-charts[Confluent Inc's cp-helm-charts] - Helm charts for deploying Confluent Platform components.
-* link:https://github.com/rafaelmnatali/kafka-k8s[Rafael Natali's kafka-k8s] - A project demonstrating Kafka deployment on Kubernetes.
+Inspired By::
 
-The project encompasses components such as Kafka, Kafka Connect, Kafka REST proxy, KSQL server, Schema Registry, Zookeeper, and a Kafka UI for monitoring and management.
+* https://github.com/confluentinc/cp-helm-charts[Confluent Inc's cp-helm-charts]: Helm charts for deploying Confluent Platform components.
+* https://github.com/rafaelmnatali/kafka-k8s[Rafael Natali's kafka-k8s]: Demonstrates Kafka deployment on Kubernetes.
 
 == Project Structure
 
-The project is organized into several key directories and files:
-
-* *Makefile* - Contains directives for the `make` command to automate the building and deployment process.
-* *README.md* - Provides an overview of the project, setup instructions, and usage guidelines.
-* *helm/* - Contains Helm charts for deploying the project components on Kubernetes.
+* *Makefile*: Facilitates building and deployment processes with make commands.
+* *README.md*: Offers project insights, setup instructions, and usage guidelines.
+* *helm/*: Hosts Helm charts for Kubernetes deployment.
+* *docker-compose.yml*: Defines the Docker setup for deploying the Kafka ecosystem.
 
 === Helm Charts
 
-Within the *helm/* directory, there are two main subdirectories:
+* *cp-helm-charts/*: Includes Helm charts for Confluent Platform components with `Chart.yaml`, `charts/`, and `requirements.yaml`.
+* *cp-kraft-helm-charts/*: Deploys Kafka in Kraft mode, featuring `Chart.yaml`, `values.yaml`, and Kubernetes resource templates.
 
-* *cp-helm-charts/*: Contains Helm charts for Confluent Platform components.
-** *Chart.yaml*: Specifies the chart's metadata.
-** *charts/*: Includes sub-charts for each component.
-** *requirements.yaml*: Lists chart dependencies.
+=== Docker Deployment
 
-* *cp-kraft-helm-charts/*: A Helm chart for deploying a Kafka cluster in Kraft mode.
-** *Chart.yaml*: Defines the chart's metadata.
-** *values.yaml*: Provides default configuration values.
-** *templates/*: Contains templates for Kubernetes resources.
+The platform also supports deployment using Docker and Docker-Compose, providing an alternative to Kubernetes for environments better suited to container management.
 
 == Key Components
 
-The project includes several components critical for a Kafka-based streaming platform:
-
-* *Kafka*: Distributed streaming platform for publishing and subscribing to streams of records.
-* *Kafka Connect*: Tool for streaming data between Apache Kafka and other systems.
-* *Kafka REST Proxy*: Provides a RESTful interface to Kafka clusters.
-* *KSQL Server*: Enables real-time data processing against Kafka.
+* *Kafka*: A distributed streaming platform.
+* *Kafka Connect*: Streams data between Kafka and other systems.
+* *Kafka REST Proxy*: Provides RESTful access to Kafka clusters.
+* *KSQL Server*: Enables real-time data processing.
 * *Schema Registry*: Manages Avro schemas for Kafka topics.
-* *Zookeeper*: Centralized service for maintaining configuration information.
-* *Kafka UI*: Web-based UI for managing Kafka clusters.
+* *Zookeeper*: Maintains configuration information.
+* *Kafka UI*: Web interface for cluster management.
 
 == Usage
 
-=== Makefile Commands
+=== Deploying with Helm
 
-The Makefile simplifies project management with commands such as:
+* *Install*: `make helm-install` or `make hi` to deploy the Kafka ecosystem on Kubernetes.
+* *Update*: `make helm-update` or `make hu` for applying updates or configuration changes.
+* *Uninstall*: `make helm-uninstall` or `make hd` to remove the deployment from Kubernetes.
 
-* `make build`: Builds Docker images for the stack.
-* `make up`: Starts the entire stack.
-* `make down`: Tears down the stack.
-* `make kafka
+=== Deploying with Docker
+
+* *Build*: `make docker-build` or `make db` to build Docker images for the stack.
+* *Up*: `make docker-up` or `make du` to start the entire stack using Docker-Compose.
+* *Down*: `make docker-down` or `make dd` to tear down the stack, removing the containers and networks.
+* *Restart*: `make docker-restart` or `make dr` combines the `docker-down` and `docker-up` targets in sequence, facilitating a swift restart of the environment.
+
+
+=== Testing the Ecosystem (Kubernetes/Helm)
+
+The following testing procedures are specifically designed for the Kubernetes/Helm deployment:
+
+* *Produce Messages*: `make kafka-producer/TOPIC_NAME` to simulate data production within the Kubernetes environment.
+* *Consume Messages*: `make kafka-consumer/TOPIC_NAME` for verifying data consumption within the Kubernetes environment.
+
+== Conclusion
+
+The C37-Platform provides a comprehensive solution for deploying and managing the Confluent Kafka ecosystem on both Kubernetes and Docker environments. With support for Helm charts and Docker Compose, it offers flexibility in deployment options, making it suitable for a wide range of applications from development to production.

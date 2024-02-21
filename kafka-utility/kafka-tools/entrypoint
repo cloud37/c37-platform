@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+if [ 'true' = "${KAFKA_CLUSTER_CLEANUP:-false}" ]
+then
+  kafka-cleaner.sh -f
+fi
+
+exec "$@"
