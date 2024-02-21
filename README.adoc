@@ -23,22 +23,22 @@ The project structure is designed for ease of use and scalability, including the
 * `kafka-connect/`: Plugins for Kafka Connect, facilitating seamless data integration.
 * `kafka-utility/`: Utilities for Kafka management tasks, enhancing operational efficiency.
 
-== Deployment
-
-=== System Prerequisites
+== System Prerequisites
 _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB of RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
 
-==== Mandatory
+=== Mandatory
 - *make*: For executing instructions in the Makefile.
 - *docker* and *docker-compose*: For running services in containers. Note that Docker Desktop integrates `docker-compose`.
 - *kubernetes*: For managing containerized applications across clusters, facilitating deployment, scaling, and automation through declarative configurations.
 - *helm*: For deploying on Kubernetes.
 
-==== Recommendation
+=== Recommendation
 - *kcat* (formerly known as kafkacat): Essential for local Kafka testing. It provides a command-line interface to produce and consume messages from Kafka topics.
 - *k9s*: For efficient management of Kubernetes clusters. It offers a user-friendly console interface that simplifies navigating, observing, and managing your clusters.
 
 NOTE: While this setup is tested on macOS with specific hardware, efforts have been made to ensure compatibility across various platforms. For users on Windows or Linux, please refer to the respective installation guides for each tool, adjusting commands and setups as necessary.
+
+== Deployment
 
 === Helm
 Deploying with Helm offers a streamlined approach to managing Kafka clusters on Kubernetes. The charts are optimized for KRaft mode, eliminating the need for Zookeeper.
