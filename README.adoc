@@ -29,6 +29,7 @@ _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 
 === Mandatory
 - *make*: For executing instructions in the Makefile.
 - *docker* and *docker-compose*: For running services in containers. Note that Docker Desktop integrates `docker-compose`.
+- *kubernetes*: For managing containerized applications across clusters, facilitating deployment, scaling, and automation through declarative configurations.
 - *helm*: For deploying on Kubernetes.
 
 === Recommendation
