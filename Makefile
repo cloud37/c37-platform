@@ -5,6 +5,16 @@ MAKEFLAGS += --warn-undefined-variables --no-print-directory
 .SHELLFLAGS := -eu -o pipefail -c
 SHELL := bash # Use bash for inline if-statements for better control structures
 
+# Check if debug mode is enabled
+DEBUG ?= 0
+
+# Depending on the DEBUG variable, set the prefix to suppress command echo
+ifeq ($(DEBUG),1)
+    QUIET :=
+else
+    QUIET := @
+endif
+
 # Artifact and Docker Settings
 export APP_NAME ?= c37-platform
 export DOCKER_LOCATION ?= docker.cloud37.io
@@ -43,11 +53,11 @@ KAFKA_PROXY_PORT := 32400
 KAFKA_PROXY_BROKER_ADDR := localhost:$(KAFKA_PROXY_PORT)
 
 # Kubernetes Pod and Broker Configuration for Kafka
-POD_NAME := $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME))
-ENDPOINT := $(shell kubectl get endpoints | grep $(APP_NAME) | awk '{print $$1}')
-KAFKA_POD_FULLNAME := $(strip $(patsubst %, %.$(ENDPOINT).default.svc.cluster.local:9092, $(POD_NAME)))
-KAFKA_BROKERS := $(shell echo $(KAFKA_POD_FULLNAME) | sed 's/ /,/g')
-KAFKA_BROKERS_FIRST := $(firstword $(KAFKA_POD_FULLNAME))
+POD_NAME = $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME))
+ENDPOINT = $(shell kubectl get endpoints | grep $(APP_NAME) | grep headless | awk '{print $$1}')
+KAFKA_POD_FULLNAME = $(strip $(patsubst %, %.$(ENDPOINT).default.svc.cluster.local:9092, $(POD_NAME)))
+KAFKA_BROKERS = $(shell echo $(KAFKA_POD_FULLNAME) | sed 's/ /,/g')
+KAFKA_BROKERS_FIRST = $(firstword $(KAFKA_POD_FULLNAME))
 
 # Helper Function for Executing Commands in Kafka Pods
 KAFKA_EXEC = kubectl exec -it $(firstword $(POD_NAME)) -- $(1)
@@ -63,65 +73,67 @@ help: ## Displays this help message
 ##@ Docker Operations
 docker-login: DOCKER_LOGIN_CREDENTIALS?=
 docker-login: ## Auto login to the Docker repository
-	docker login $(DOCKER_LOGIN_CREDENTIALS) $(DOCKER_REPOSITORY)
+	$(QUIET)docker login $(DOCKER_LOGIN_CREDENTIALS) $(DOCKER_REPOSITORY)
 
 docker-build: ## Build stack images with no cache
-	$(DOCKER_COMPOSE) build --no-cache
+	$(QUIET)$(DOCKER_COMPOSE) build --no-cache
 db: docker-build
 
 docker-up: ## Create and start the entire stack
-	$(DOCKER_COMPOSE) up
+	$(QUIET)$(DOCKER_COMPOSE) up
 du: docker-up
 
 docker-down: ## Tear down the entire stack
-	$(DOCKER_COMPOSE) down
+	$(QUIET)$(DOCKER_COMPOSE) down
 dd: docker-down
 
 docker-restart: docker-down docker-up ## Restart the stack by tearing it down and then starting it up again
 dr: docker-restart
 
 docker-cleanup: ## Cleans up the Kafka cluster by removing all data
-	$(call KAFKA_TOOLS,true,)
+	$(QUIET)$(call KAFKA_TOOLS,true,)
 
 ##@ Kubernetes Operations with Helm
 helm-install: ## Install the Helm chart for the application
-	helm install $(APP_NAME) $(HELM_CHART) --set kafka-ui.service.nodePort=$(KAFKA_UI_HTTP_PORT) || true
+	$(QUIET)helm install $(APP_NAME) $(HELM_CHART) --set kafka-ui.service.nodePort=$(KAFKA_UI_HTTP_PORT) || true
 hi: helm-install
 
 helm-upgrade: ## Upgrade the application via Helm
-	helm upgrade $(APP_NAME) $(HELM_CHART)
+	$(QUIET)helm upgrade $(APP_NAME) $(HELM_CHART)
 
 helm-update: helm-install helm-upgrade ## Update the application using Helm by reinstalling and upgrading
 hu: helm-update
 
 helm-uninstall: ## Uninstall the Helm chart
-	helm uninstall $(APP_NAME)
+	$(QUIET)helm uninstall $(APP_NAME)
 hd: helm-uninstall
 
 helm-show: ## Show details of the Helm installation
-	helm get all $(APP_NAME)
+	$(QUIET)helm get all $(APP_NAME)
 
 helm-deps-add: ## Add Helm chart repositories
-	@helm repo add ricardo https://ricardo-ch.github.io/helm-charts/
+	$(QUIET)helm repo add ricardo https://ricardo-ch.github.io/helm-charts/
 
 helm-deps-install: ## Install Helm chart dependencies
-	helm install kafka-proxy ricardo/kafka-proxy --set 'config.kafkaClient.brokers={$(KAFKA_BROKERS_FIRST)}' --set config.proxyClientTlsEnabled=false || true
+	$(QUIET)helm install kafka-proxy ricardo/kafka-proxy --set 'config.kafkaClient.brokers={$(KAFKA_BROKERS_FIRST)}' --set config.proxyClientTlsEnabled=false || true
 
 helm-deps-uninstall: ## Uninstall Helm chart dependencies
-	helm uninstall kafka-proxy || true
+	$(QUIET)helm uninstall kafka-proxy || true
 
 ##@ Kafka Operations in Kubernetes
 kafka-bash: ## Open a Bash shell in a Kafka pod for manual operations
-	$(call KAFKA_EXEC,bash)
+	$(QUIET)$(call KAFKA_EXEC,bash)
 
 kafka-topic/%: ## Create a Kafka topic, e.g., `make kafka-topic/test` for a topic named "test"
-	$(call KAFKA_EXEC,kafka-topics --create --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)) --partitions 3 --replication-factor 3)
+	$(QUIET)$(call KAFKA_EXEC,kafka-topics --create --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)) --partitions 3 --replication-factor 3)
 
 kafka-producer/%: ## Start a Kafka producer for a given topic, e.g., `make kafka-producer/test` for topic "test"
-	$(call KAFKA_EXEC,kafka-console-producer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)))
+	$(QUIET)$(call KAFKA_EXEC,kafka-console-producer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)))
+kp: kafka-producer/test
 
 kafka-consumer/%: ## Start a Kafka consumer for a given topic, e.g., `make kafka-consumer/test` for topic "test"
-	$(call KAFKA_EXEC,kafka-console-consumer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)))
+	$(QUIET)$(call KAFKA_EXEC,kafka-console-consumer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)) | grep -v "WARN")
+kc: kafka-consumer/test
 
 ##@ kcat (Kafka Cat) Operations
 kcat-meta: ## Display Kafka cluster metadata using kcat
