@@ -10,9 +10,9 @@ _The project was inspired by the Helm Charts https://github.com/confluentinc/cp-
 _This project was rigorously tested on a MacBook Pro with an Apple M2 Max chip, 32 GB of RAM under macOS Sonoma 14.2.1, Docker Desktop 4.27.2, and Kubernetes v1.29.1._
 
 === Mandatory
-- *make*: For executing instructions in the Makefile. Ensure compatibility with your project by using version X.X or newer.
-- *docker* and *docker-compose*: For running services in containers. Docker Desktop version 4.27.2 or newer is recommended. Note that Docker Desktop integrates `docker-compose`.
-- *helm*: For deploying on Kubernetes. Version X.X or newer is recommended.
+- *make*: For executing instructions in the Makefile.
+- *docker* and *docker-compose*: For running services in containers. Note that Docker Desktop integrates `docker-compose`.
+- *helm*: For deploying on Kubernetes.
 
 === Recommendation
 - *kcat* (formerly known as kafkacat): Essential for local Kafka testing. It provides a command-line interface to produce and consume messages from Kafka topics.
