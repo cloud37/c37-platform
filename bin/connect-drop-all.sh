@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#URL=https://connect-kafka-streaming.ewe.onpower.cloud
-#URL=https://connect-kafka-streaming-release.ewe-test.onpower.cloud
-
 while getopts u:fs: flag
 do
     case "${flag}" in

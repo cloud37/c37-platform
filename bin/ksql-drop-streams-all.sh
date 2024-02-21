@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#URL=https://ksqldb-kafka-streaming.ewe.onpower.cloud
-#URL=https://ksqldb-kafka-streaming-release.ewe-test.onpower.cloud
-
 while getopts u:f flag
 do
     case "${flag}" in
