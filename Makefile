@@ -38,7 +38,7 @@ KAFKA_TOOLS = $(DOCKER) run \
 	$(2)
 
 # Helm
-HELM_CHART := helm/cp-kraft-helm-charts
+HELM_CHART := helm-charts
 
 # Kubernetes
 KAFKA_UI_HTTP_PORT := 30000
@@ -83,11 +83,11 @@ dd: docker-down
 docker-restart: docker-down docker-up ## combines the `down` and `up` targets in sequence
 dr: docker-restart
 
-##@ docker -> Kafka Commands
-kafka-cluster-cleanup: ## cleans up the Kafka cluster
+##@ docker -> Kafka
+docker-cleanup: ## cleans up the Kafka cluster
 	$(call KAFKA_TOOLS,true,)
 
-##@ k8s -> Helm Commands
+##@ k8s -> Helm
 helm-install: ## installs the Helm chart
 	helm install $(APP_NAME) $(HELM_CHART) --set kafka-ui.service.nodePort=$(KAFKA_UI_HTTP_PORT) || true
 hi: helm-install

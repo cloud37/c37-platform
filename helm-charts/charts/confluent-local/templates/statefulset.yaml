@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "kafka.fullname" . }}
+  name: {{ include "confluent-local.fullname" . }}
   labels:
-    app: {{ include "kafka.name" . }}
-  {{- include "kafka.labels" . | nindent 4 }}
+    app: {{ include "confluent-local.name" . }}
+  {{- include "confluent-local.labels" . | nindent 4 }}
 spec:
   podManagementPolicy: Parallel
   replicas: {{ default 3 .Values.brokers }}
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ include "kafka.name" . }}
-    {{- include "kafka.selectorLabels" . | nindent 6 }}
-  serviceName: {{ include "kafka.fullname" . }}-headless
+      app: {{ include "confluent-local.name" . }}
+    {{- include "confluent-local.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "confluent-local.fullname" . }}-headless
   template:
     metadata:
       labels:
-        app: {{ include "kafka.name" . }}
-      {{- include "kafka.labels" . | nindent 8 }}
+        app: {{ include "confluent-local.name" . }}
+      {{- include "confluent-local.labels" . | nindent 8 }}
     spec:
       containers:
       - command:
@@ -33,7 +33,7 @@ spec:
           exec /etc/confluent/docker/run
         env:
         - name: APP_NAME
-          value: {{ include "kafka.fullname" . }}
+          value: {{ include "confluent-local.fullname" . }}
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -82,7 +82,7 @@ spec:
       schedulerName: default-scheduler
       securityContext:
         fsGroup: 1000
-      serviceAccountName: {{ include "kafka.fullname" . }}
+      serviceAccountName: {{ include "confluent-local.fullname" . }}
       terminationGracePeriodSeconds: 30
       volumes:
       - emptyDir: {}
