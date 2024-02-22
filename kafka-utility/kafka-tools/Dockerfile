@@ -26,7 +26,6 @@ RUN set -eux ; \
     rm -rf /tmp2 ; \
     rm -rf /var/lib/apt/lists/*
 
-#COPY ./configs /etc/kafka/configs
 COPY ./bin/* /usr/bin
 
 COPY ./kafka-utility/kafka-tools/entrypoint /entrypoint

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kafka-tools.fullname" . }}
+  labels:
+    app: {{ include "kafka-tools.name" . }}
+  {{- include "kafka-tools.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "kafka-tools.name" . }}
+    {{- include "kafka-tools.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "kafka-tools.name" . }}
+      {{- include "kafka-tools.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: {{ .Values.image }}:{{ .Values.imageTag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        name: {{ include "kafka-tools.fullname" . }}
+        command:
+          - sh
+          - -exc
+          - |
+            exec sleep infinity
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: {{ .Values.kafka.bootstrapServers }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler

@@ -151,3 +151,13 @@ kafka-ui:
     nodePort: 30000
   kafka:
     bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
+
+## ------------------------------------------------------
+## Kafka Tools
+## ------------------------------------------------------
+kafka-tools:
+  enabled: true
+  image: docker.cloud37.io/cloud37/c37-platform/kafka-tools
+  imageTag: latest
+  kafka:
+    bootstrapServers: "c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"

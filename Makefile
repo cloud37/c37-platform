@@ -21,7 +21,7 @@ export DOCKER_LOCATION ?= docker.cloud37.io
 export DOCKER_OWNER ?= cloud37
 export DOCKER_REPOSITORY_ROOT := $(DOCKER_LOCATION)/$(DOCKER_OWNER)
 export DOCKER_REPOSITORY := $(DOCKER_REPOSITORY_ROOT)/$(APP_NAME)
-export DOCKER_NETWORK ?= cloud37-streaming
+export DOCKER_NETWORK ?= $(APP_NAME)
 
 # Stack Versions
 export KAFKA_VERSION = 3.5.1
@@ -61,6 +61,9 @@ KAFKA_BROKERS_FIRST = $(firstword $(KAFKA_POD_FULLNAME))
 
 # Helper Function for Executing Commands in Kafka Pods
 KAFKA_EXEC = kubectl exec -it $(firstword $(POD_NAME)) -- $(1)
+
+POD_NAME2 = $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME)-$(1))
+KAFKA_EXEC2 = kubectl exec -it $(firstword $(call POD_NAME2,$(1))) -- $(2)
 
 ##@ helpers
 # Displays this help message, dynamically generating the command list
@@ -130,6 +133,10 @@ kafka-topic/%: ## Create a Kafka topic, e.g., `make kafka-topic/test` for a topi
 kafka-producer/%: ## Start a Kafka producer for a given topic, e.g., `make kafka-producer/test` for topic "test"
 	$(QUIET)$(call KAFKA_EXEC,kafka-console-producer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)))
 kp: kafka-producer/test
+
+kafka-rand-producer/%: ## Start a Kafka rand producer for a given topic, e.g., `make kafka-rand-producer/test` for topic "test"
+	$(QUIET)$(call KAFKA_EXEC2,kafka-tools,kafka-c37-console-producer.sh -t $(notdir $@))
+kp: kafka-rand-producer/test
 
 kafka-consumer/%: ## Start a Kafka consumer for a given topic, e.g., `make kafka-consumer/test` for topic "test"
 	$(QUIET)$(call KAFKA_EXEC,kafka-console-consumer --topic $(notdir $@) --bootstrap-server $(firstword $(KAFKA_POD_FULLNAME)) | grep -v "WARN")
