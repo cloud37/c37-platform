@@ -28,6 +28,9 @@ RUN set -eux ; \
 
 COPY ./bin/* /usr/bin
 
+RUN curl -L https://github.com/cloud37/template-interpolator/releases/download/1.0.0/interpol-amd64 -o /usr/bin/interpol && \
+    chmod +x /usr/bin/interpol
+
 COPY ./kafka-utility/kafka-tools/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
