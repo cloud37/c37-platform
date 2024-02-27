@@ -22,6 +22,7 @@ export DOCKER_OWNER ?= cloud37
 export DOCKER_REPOSITORY_ROOT := $(DOCKER_LOCATION)/$(DOCKER_OWNER)
 export DOCKER_REPOSITORY := $(DOCKER_REPOSITORY_ROOT)/$(APP_NAME)
 export DOCKER_NETWORK ?= $(APP_NAME)
+export DOCKER_NETWORK_EXTERNAL ?= false
 
 # Stack Versions
 export KAFKA_VERSION = 3.5.1
@@ -43,23 +44,24 @@ KAFKA_TOOLS = $(DOCKER) run \
     $(DOCKER_REPOSITORY)/kafka-tools \
     $(2)
 
+# Helper Function
+pod_name = $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME)-$(1))
+kafka_pod_fullname = $(strip $(patsubst %, %.$(ENDPOINT).default.svc.cluster.local:9092, $(firstword $(call pod_name,$(1)))))
+kafka_brokers_first = $(firstword $(call kafka_pod_fullname,$(1)))
+kafka_exec = kubectl exec -it $(firstword $(call pod_name,$(1))) -- $(2)
+kubectl_node_port = $(shell kubectl get service | awk '/$(APP_NAME)-$(1)/ {split($$5, a, ":"); split(a[2], b, "/"); print b[1]}')
+
 # Helm Chart Configuration
 HELM_CHART := helm-charts
 
 # Kubernetes Service Endpoints and Ports
 ENDPOINT = $(shell kubectl get endpoints | grep $(APP_NAME) | grep headless | awk '{print $$1}')
 
-KAFKA_UI_HTTP_PORT := 30000
+KAFKA_UI_HTTP_PORT := $(call kubectl_node_port,kafka-ui)
 KAFKA_UI_HTTP_ADDR := http://localhost:$(KAFKA_UI_HTTP_PORT)
 
 KAFKA_PROXY_PORT := 32400
 KAFKA_PROXY_BROKER_ADDR := localhost:$(KAFKA_PROXY_PORT)
-
-# Helper Function
-pod_name = $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME)-$(1))
-kafka_pod_fullname = $(strip $(patsubst %, %.$(ENDPOINT).default.svc.cluster.local:9092, $(firstword $(call pod_name,$(1)))))
-kafka_brokers_first = $(firstword $(call kafka_pod_fullname,$(1)))
-kafka_exec = kubectl exec -it $(firstword $(call pod_name,$(1))) -- $(2)
 
 ##@ Helpers
 # Displays this help message, dynamically generating the command list
@@ -94,7 +96,7 @@ docker-cleanup: ## Cleans up the Kafka cluster by removing all data
 
 ##@ Kubernetes Operations with Helm
 helm-install: ## Install the Helm chart for the application
-	$(QUIET)helm install $(APP_NAME) $(HELM_CHART) --set kafka-ui.service.nodePort=$(KAFKA_UI_HTTP_PORT) || true
+	$(QUIET)helm install $(APP_NAME) $(HELM_CHART) || true
 hi: helm-install
 
 helm-upgrade: ## Upgrade the application via Helm

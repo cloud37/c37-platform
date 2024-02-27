@@ -28,7 +28,7 @@ spec:
             exec sleep infinity
         env:
         - name: BOOTSTRAP_SERVERS
-          value: {{ .Values.kafka.bootstrapServers }}
+          value: {{ template "helm.kafkaBootstrapServers" . }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

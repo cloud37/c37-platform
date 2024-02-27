@@ -71,7 +71,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
             - name: CONNECT_BOOTSTRAP_SERVERS
-              value: {{ template "cp-kafka-connect.kafka.bootstrapServers" . }}
+              value: {{ template "helm.kafkaBootstrapServers" . }}
             - name: CONNECT_GROUP_ID
               value: {{ template "cp-kafka-connect.groupId" . }}
             - name: CONNECT_CONFIG_STORAGE_TOPIC

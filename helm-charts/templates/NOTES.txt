@@ -1,1 +1,2 @@
 
+Kafka Bootstrap Servers: {{ include "helm.kafkaBootstrapServers" . }}

@@ -76,7 +76,7 @@ spec:
           {{- end }}
           env:
           - name: KSQL_BOOTSTRAP_SERVERS
-            value: {{ template "cp-ksql-server.kafka.bootstrapServers" . }}
+            value: {{ template "helm.kafkaBootstrapServers" . }}
           - name: KSQL_KSQL_SERVICE_ID
             value: {{ template "cp-ksql-server.serviceId" . }}
           - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
@@ -92,6 +92,10 @@ spec:
           {{- end }}
           {{- range $key, $value := .Values.configurationOverrides }}
           - name: {{ printf "KSQL_%s" $key | replace "." "_" | upper | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- range $key, $value := .Values.customEnv }}
+          - name: {{ $key | quote }}
             value: {{ $value | quote }}
           {{- end }}
           {{- if .Values.jmx.port }}

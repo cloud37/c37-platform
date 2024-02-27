@@ -60,3 +60,15 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "helm.kafkaBootstrapServers" -}}
+{{- $totalBrokers := int .Values.global.kafkaBrokers -}}
+{{- $name := printf "%s-%s" .Release.Name .Values.global.kafkaChart | trunc 63 | trimSuffix "-" -}}
+{{- $servers := list -}}
+{{- range $i := until $totalBrokers -}}
+  {{- $server := printf "%s-%d.%s-headless:9092" $name $i $name -}}
+  {{- $servers = append $servers $server -}}
+{{- end -}}
+{{- join "," $servers -}}
+{{- end -}}
+

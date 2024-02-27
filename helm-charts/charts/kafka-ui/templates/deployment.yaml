@@ -50,9 +50,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
-              value: {{ template "kafka-ui.kafka.bootstrapServers" . }}
-            - name: KAFKA_CLUSTERS_0_ZOOKEEPER
-              value: {{ template "kafka-ui.cp-zookeeper.service-name" . }}
+              value: {{ template "helm.kafkaBootstrapServers" . }}
             - name: KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME
               value: first
             - name: KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS

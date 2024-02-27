@@ -1,4 +1,11 @@
 ## ------------------------------------------------------
+## Global Values
+## ------------------------------------------------------
+global:
+  kafkaChart: cp-kafka
+  kafkaBrokers: 3
+
+## ------------------------------------------------------
 ## Kafka (confluent-local)
 ## ------------------------------------------------------
 confluent-local:
@@ -57,8 +64,6 @@ cp-schema-registry:
   #  requests:
   #   cpu: 100m
   #   memory: 128Mi
-  kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## REST Proxy
@@ -81,8 +86,6 @@ cp-kafka-rest:
   #  requests:
   #   cpu: 100m
   #   memory: 128Mi
-  cp-kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## Kafka Connect
@@ -105,8 +108,6 @@ cp-kafka-connect:
   #  requests:
   #   cpu: 100m
   #   memory: 128Mi
-  kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## KSQL Server
@@ -122,8 +123,6 @@ cp-ksql-server:
   heapOptions: "-Xms512M -Xmx512M"
   ksql:
     headless: false
-  kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
 
 ## ------------------------------------------------------
 ## Kafka-UI
@@ -148,9 +147,11 @@ kafka-ui:
   #   memory: 128Mi
   service:
     type: NodePort
-    nodePort: 30000
-  kafka:
-    bootstrapServers: "PLAINTEXT://c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"
+  #  nodePort: 30000
+  envs:
+    config:
+      KAFKA_CLUSTERS_0_DEFAULTKEYSERDE: "SchemaRegistry"
+      KAFKA_CLUSTERS_0_DEFAULTVALUESERDE: "SchemaRegistry"
 
 ## ------------------------------------------------------
 ## Kafka Tools
@@ -159,5 +160,3 @@ kafka-tools:
   enabled: true
   image: docker.cloud37.io/cloud37/c37-platform/kafka-tools
   imageTag: latest
-  kafka:
-    bootstrapServers: "c37-platform-cp-kafka-0.c37-platform-cp-kafka-headless:9092"

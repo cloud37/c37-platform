@@ -1,8 +1,8 @@
 ---
 networks:
   default:
-    name: cloud37-streaming
-    external: true
+    name: ${DOCKER_NETWORK}
+    external: false
 
 services:
   broker:
