@@ -45,23 +45,22 @@ KAFKA_TOOLS = $(DOCKER) run \
     $(2)
 
 # Helper Function
-pod_name = $(shell kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep $(APP_NAME)-$(1))
-kafka_pod_fullname = $(strip $(patsubst %, %.$(ENDPOINT).default.svc.cluster.local:9092, $(firstword $(call pod_name,$(1)))))
-kafka_brokers_first = $(firstword $(call kafka_pod_fullname,$(1)))
-kafka_exec = kubectl exec -it $(firstword $(call pod_name,$(1))) -- $(2)
-kubectl_node_port = $(shell kubectl get service | awk '/$(APP_NAME)-$(1)/ {split($$5, a, ":"); split(a[2], b, "/"); print b[1]}')
+kafka_exec = kubectl exec -it $(firstword $(call find_kubectl_pod_name,$(1))) -- $(2)
+
+get_kafka_pod_fullname = $(strip $(patsubst %, %.$(KAFKA_BOOTSTRAP_SERVER).default.svc.cluster.local:9092, $(call find_kubectl_pod_name,$(1))))
+
+find_kubectl_node_port = $(shell kubectl get service | awk '/$(APP_NAME)-$(1)/ {split($$5, a, ":"); split(a[2], b, "/"); print b[1]}')
+find_kubectl_endpoint = $(shell kubectl get endpoints | awk '/$(APP_NAME)/$(and $(foreach term,$(1),&& /$(term)/)) {print $$1}')
+find_kubectl_pod_name = $(shell kubectl get pods | awk '/$(APP_NAME)/$(and $(foreach term,$(1),&& /$(term)/)) {print $$1}')
 
 # Helm Chart Configuration
 HELM_CHART := helm-charts
 
 # Kubernetes Service Endpoints and Ports
-ENDPOINT = $(shell kubectl get endpoints | grep $(APP_NAME) | grep headless | awk '{print $$1}')
+KAFKA_BOOTSTRAP_SERVER = $(call find_kubectl_endpoint,kafka headless)
 
-KAFKA_UI_HTTP_PORT := $(call kubectl_node_port,kafka-ui)
+KAFKA_UI_HTTP_PORT := $(call find_kubectl_node_port,kafka-ui)
 KAFKA_UI_HTTP_ADDR := http://localhost:$(KAFKA_UI_HTTP_PORT)
-
-KAFKA_PROXY_PORT := 32400
-KAFKA_PROXY_BROKER_ADDR := localhost:$(KAFKA_PROXY_PORT)
 
 ##@ Helpers
 # Displays this help message, dynamically generating the command list
@@ -115,51 +114,28 @@ helm-show: ## Show details of the Helm installation
 helm-deps-add: ## Add Helm chart repositories
 	$(QUIET)helm repo add ricardo https://ricardo-ch.github.io/helm-charts/
 
-helm-deps-install: ## Install Helm chart dependencies
-	$(QUIET)helm install kafka-proxy ricardo/kafka-proxy --set 'config.kafkaClient.brokers={$(call kafka_brokers_first,)}' --set config.proxyClientTlsEnabled=false || true
-
-helm-deps-uninstall: ## Uninstall Helm chart dependencies
-	$(QUIET)helm uninstall kafka-proxy || true
-
 ##@ Kafka Operations in Kubernetes
-kafka-bash: POD_NAME=cp-kafka
+kafka-bash: POD_NAME=cp-kafka-0
 kafka-bash: ## Open a Bash shell in a Kafka pod for manual operations
 	$(QUIET)$(call kafka_exec,$(POD_NAME),bash)
 
-kafka-topic/%: POD_NAME=cp-kafka
+kafka-topic/%: POD_NAME=cp-kafka-0
 kafka-topic/%: ## Create a Kafka topic, e.g., `make kafka-topic/test` for a topic named "test"
-	$(QUIET)$(call kafka_exec,$(POD_NAME),kafka-topics --create --topic $(notdir $@) --bootstrap-server $(firstword $(call kafka_pod_fullname,$(POD_NAME))) --partitions 3 --replication-factor 3)
+	$(QUIET)$(call kafka_exec,$(POD_NAME),kafka-topics --create --topic $(notdir $@) --bootstrap-server $(firstword $(call get_kafka_pod_fullname,$(POD_NAME))) --partitions 3 --replication-factor 3)
 
-kafka-producer/%: POD_NAME=cp-kafka
+kafka-producer/%: POD_NAME=cp-kafka-0
 kafka-producer/%: ## Start a Kafka producer for a given topic, e.g., `make kafka-producer/test` for topic "test"
-	$(QUIET)$(call kafka_exec,$(POD_NAME),kafka-console-producer --topic $(notdir $@) --bootstrap-server $(firstword $(call kafka_pod_fullname,$(POD_NAME))))
+	$(QUIET)$(call kafka_exec,$(POD_NAME),kafka-console-producer --topic $(notdir $@) --bootstrap-server $(firstword $(call get_kafka_pod_fullname,$(POD_NAME))))
 kp: kafka-producer/test
 
 kafka-rand-producer/%: ## Start a Kafka rand producer for a given topic, e.g., `make kafka-rand-producer/test` for topic "test"
 	$(QUIET)$(call kafka_exec,kafka-tools,kafka-c37-console-producer.sh -t $(notdir $@))
 kp: kafka-rand-producer/test
 
-kafka-consumer/%: POD_NAME=cp-kafka
+kafka-consumer/%: POD_NAME=cp-kafka-0
 kafka-consumer/%: ## Start a Kafka consumer for a given topic, e.g., `make kafka-consumer/test` for topic "test"
-	$(QUIET)$(call kafka_exec,$(POD_NAME),kafka-console-consumer --topic $(notdir $@) --bootstrap-server $(firstword $(call kafka_pod_fullname,$(POD_NAME))) | grep -v "WARN")
+	$(QUIET)$(call kafka_exec,$(POD_NAME),kafka-console-consumer --topic $(notdir $@) --bootstrap-server $(firstword $(call get_kafka_pod_fullname,$(POD_NAME))) | grep -v "WARN")
 kc: kafka-consumer/test
-
-##@ kcat (Kafka Cat) Operations
-kcat-meta: ## Display Kafka cluster metadata using kcat
-	kcat -L -b $(KAFKA_PROXY_BROKER_ADDR) -J | jq
-
-kcat-topic-all: ## List all Kafka topics using kcat
-	kcat -L -b $(KAFKA_PROXY_BROKER_ADDR) -J | jq '.topics[].topic'
-
-kcat-consumer/%: ## Consume messages from a topic using kcat, e.g., `make kcat-consumer/test` for topic "test"
-	kcat -b $(KAFKA_PROXY_BROKER_ADDR) -t $(notdir $@) -C
-
-kcat-producer/%: ## Produce a message to a topic using kcat, e.g., `make kcat-producer/test/abc` to send "abc" to topic "test"
-	echo "echo '$(notdir $@)' | kcat -b $(KAFKA_PROXY_BROKER_ADDR) -t $(notdir $(patsubst %/,%,$(dir $@))) -P"
-
-##@ Kafka Proxy Operations
-kill-proxy-port: ## Free up the Kafka proxy port by killing the process occupying it
-	kill -9 $(shell sudo lsof -i :$(KAFKA_PROXY_PORT) | awk '{print $$2}' | tail -1)
 
 ##@ Kafka UI Operations
 ui-open: ## Open the Kafka UI in a web browser
